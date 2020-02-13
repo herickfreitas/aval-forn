@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	
+	<link type="text/css" rel="stylesheet" href="/style-guide/css/fluig-style-guide.min.css"/>
+	<script type="text/javascript" src="/portal/resources/js/jquery/jquery.js"></script>
+	<script type="text/javascript" src="/portal/resources/js/jquery/jquery-ui.min.js"></script>
+	<script type="text/javascript" src="/portal/resources/js/mustache/mustache-min.js"></script>
+	<script type="text/javascript" src="/style-guide/js/fluig-style-guide.min.js" charset="utf-8"></script>
+	<script type="text/javascript" src="/webdesk/vcXMLRPC.js"></script>
+	
+	
+    <!-- CUSTOM -->
+    <link href="/style-guide/css/fluig-style-guide-filter.min.css" rel="stylesheet" type="text/css">
+    <link href="/style-guide/css/fluig-style-guide-ratingstars.min.css" rel="stylesheet" type="text/css">
+    <script src="/style-guide/js/fluig-style-guide-filter.min.js"></script>
+    <script src="/style-guide/js/fluig-style-guide-ratingstars.min.js"></script>
+    <script src="maskMoney.js"></script>
+	<script src="custom.js"></script>
+	<script src='https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.62/pdfmake.min.js'></script>
+	<script src='https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.62/vfs_fonts.js'></script>
+    
+</head>
+
+<body>
+<div class="fluig-style-guide">
+
+    <form name="createFormComponents" id="createFormComponents" role="form" style="padding-left: 10px; padding-right: 10px;"> 
+
+		<div class="panel panel-primary">
+
+			<div class="panel-heading">
+
+				<h1 class="panel-title title-form-application">Avalia&ccedil;&atilde;o de Fornecedores</h1>
+			
+			</div>
+
+			<div class="panel-body" id="cabecalho">
+
+				<div class="paragraph-is-required system-message-information alert alert-info" role="alert" id="alert">
+					Todos os campos com * s&atilde;o de preenchimento obrigat&oacute;rio.
+				</div>
+
+				<input id="periodo" name="periodo" type="hidden">
+
+				<div class="form-group row">
+				
+					<div class="col-md-6">
+				
+						<label for="login"><b>Requisitante</b></label>
+						<input type="text" class="form-control" name="login" id="login"  readonly />
+										
+					</div>
+					
+					<div class="col-md-3">
+					
+						<label for="dataAbertura"><b>Data de abertura</b></label>				
+						<input type="text" class="form-control" name="dataAbertura" id="dataAbertura" mask="00/00/0000" readonly />
+					
+					</div>
+				
+					<div class="col-md-3">
+					
+						<label for="dataAbertura"><b>Hora de abertura</b></label>
+						<input type="text" class="form-control" name="horaAbertura" id="horaAbertura" readonly />
+					
+					</div>
+				
+				</div>
+
+				<div class="form-group row">
+
+					<div class="col-md-3">
+
+						<label for="periodoMes"><b>Per&iacute;odo M&ecirc;s</b></label>
+						<span class="reqIni text-danger">
+						</span>
+						<select name="periodoMes" id="periodoMes" class="form-control">
+							<option value=""></option>
+							<option value="1">Janeiro</option>
+							<option value="2">Fevereiro</option>
+							<option value="3">Mar&ccedil;o</option>
+							<option value="4">Abril</option>
+							<option value="5">Maio</option>
+							<option value="6">Junho</option>
+							<option value="7">Julho</option>
+							<option value="8">Agosto</option>
+							<option value="9">Setembro</option>
+							<option value="10">Outubro</option>
+							<option value="11">Novembro</option>
+							<option value="12">Dezembro</option>
+						</select>
+
+						<input type="hidden" name="periodoMes_input" class="form-control" maxlength="200" id="periodoMes_input" value="" style="width:180px">													
+
+					</div>
+
+					<div class="col-md-3">
+					
+						<label for="periodoAno"><b>Ano</b></label>
+						<input type="text" class="form-control" name="periodoAno" id="periodoAno" readonly />
+					
+					</div>
+
+					<div class="col-md-6">
+					
+						<label for="nomeObra"><b>Nome da Obra</b></label>
+						<span class="reqIni text-danger">
+						</span>
+						<select name="nomeObra" id="nomeObra" class="form-control">
+							<option value=""></option>
+							<option value="75">75</option>
+							<option value="76">76</option>
+						</select>			
+
+						<input type="hidden" name="nomeObra_input" class="form-control" maxlength="200" id="nomeObra_input" value="" style="width:180px">	
+
+					</div>
+
+				</div>
+		
+				<div class="form-field" data-type="tabledetail" data-show-properties="" data-field-name="Produtos"
+					style="padding-top: 30px; left: 0px; top: 0px;">
+					<div class="form-input">
+						<div class="form-group table-responsive" style="padding-bottom: 40px;">
+							<table border="0" tablename="tableProducts" id="tableProducts" class="table table-bordered table-hover" noaddbutton="true" nodeletebutton="true">
+								<thead style="color: #495057; background-color:#EEEEEE; border-color:#dee2e6;">
+									<tr class="tableHeadRow">
+										<th class="tableColumn colunaItem" width="2%"><input class-"form-control" type="checkbox" id="selecTodos"  name="selecTodos" onclick="enableRemoveTodos()"/></th>
+										<th class="tableColumn">Fornecedor
+											<span class="reqIni text-danger"></span>   
+										</th>
+										<th class="tableColumn" colspan="2">Aval. RH/DP
+											<span class="reqRHDP text-danger"></span>     
+										</th>            
+										<th class="tableColumn" colspan="2">Aval. QSMS
+											<span class="reqQSMS text-danger"></span>     
+										</th>                          
+										<th class="tableColumn" colspan="2">Aval. JUR
+											<span class="reqJur text-danger"></span>     
+										</th>                      
+										<th class="tableColumn">Situação Atual</th>
+									</tr>
+								</thead>
+								<tbody>
+								<tr class="tableBodyRow">
+									<td class="fs-v-align-middle colunaItem">
+										<input class-"form-control linhaTabela" type="checkbox" id="selecLinha" name="selecLinha" onclick="enableRemoveLinha()"/>
+									</td>
+									<td class="fs-v-align-middle">
+
+										<div style="width:400px;">
+
+											<input  
+												class="form-control"
+												type="zoom"
+												id = "vendor"
+												name="vendor"
+												data-zoom="{
+													'displayKey':'FORNECEDOR',
+													'datasetId':'ds_vendors_avalforn',
+													'maximumSelectionLength':'1',
+													'placeholder':'',
+													'fields':[{
+														'field':'FORNECEDOR',
+														'label':'Fornecedor',
+														'standard':'true'
+													}]
+												}"
+											/>  
+
+											<input type="hidden" name="vendor_input" class="form-control" maxlength="200" id="vendor_input" value="" style="width:400px">	
+												
+										</div>
+
+									</td>
+									<td class="fs-v-align-middle">   
+										
+										<select id="aval_rhdp" class="form-control" name="aval_rhdp" style="width:180px" onblur="persistData(this.value, this.id)">
+														<option value=""></option>
+														<option value="Liberado">Liberado</option>
+														<option value="Não Liberado">N&atilde;o Liberado</option>
+														<option value="Liberado c/ Pend.">Liberado c/ Pend.</option>
+										</select>
+										<input type="hidden" name="aval_rhdp_input" class="form-control" maxlength="200" id="aval_rhdp_input" value="" style="width:180px">													
+										
+										<td>
+											<div class="form-field" data-type="textarea" data-show-properties="" data-field-name="obs_rhdp"         					
+												style="position: relative; left: 0px; top: 0px; width:180px;">
+												<div class="form-input">
+													<div class="form-group">
+														<textarea class="form-control"
+															rows="2"
+															cols="80"
+															id="obs_rhdp" 
+															name="obs_rhdp"
+															placeholder="Observações">
+														</textarea>
+													</div>
+												</div>
+											</div>                           
+										</td>
+									</td>						
+								<td class="fs-v-align-middle">
+
+												<select id="aval_qsms" class="form-control" name="aval_qsms" style="width:180px" onblur="persistData(this.value, this.id)">
+														<option value=""></option>
+														<option value="Liberado">Liberado</option>
+														<option value="Não Liberado">N&atilde;o Liberado</option>
+														<option value="Liberado c/ Pend.">Liberado c/ Pend.</option>
+												</select>
+												
+												<input type="hidden" name="aval_qsms_input" class="form-control" maxlength="200" id="aval_qsms_input" value="" style="width:180px">
+										<td>
+											<div class="form-field" data-type="textarea" data-show-properties="" data-field-name="obs_qsms"         					
+												style="position: relative; left: 0px; top: 0px; width:180px;">
+												<div class="form-input">
+													<div class="form-group">
+														<textarea class="form-control"
+															rows="2"
+															cols="80"
+															id="obs_qsms"
+															name="obs_qsms"
+															placeholder="Observações">
+														</textarea>
+													</div>
+												</div>
+											</div>
+										</td>                                
+								</td>				
+								<td class="fs-v-align-middle">
+													<select id="aval_jur" class="form-control" name="aval_jur" style="width:180px" onblur="persistData(this.value, this.id)">
+														<option value=""></option>
+														<option value="Liberado">Liberado</option>
+														<option value="Não Liberado">N&atilde;o Liberado</option>
+														<option value="Liberado c/ Pend.">Liberado c/ Pend.</option>
+													</select>
+													
+													<input type="hidden" name="aval_jur_input" class="form-control" maxlength="200" id="aval_jur_input" value="" style="width:180px">
+													
+										
+										<td>
+											<div class="form-field" data-type="textarea" data-show-properties="" data-field-name="obs_jur"         					
+												style="position: relative; left: 0px; top: 0px; width:180px;">
+												<div class="form-input">
+													<div class="form-group">
+														<textarea class="form-control"
+															rows="2"
+															cols="80"
+															id="obs_jur"
+															name="obs_jur"
+															placeholder="Observações">
+														</textarea>
+													</div>
+												</div>
+											</div> 
+										</td>                               
+									</td>
+									<td class="fs-v-align-middle">
+										<div class="form-field" data-type="textarea" data-show-properties="" data-field-name="status_forn"         					
+											style="position: relative; left: 0px; top: 0px; width:180px;">
+											<div class="form-input">
+												<div class="form-group">
+													<textarea class="form-control"
+														rows="2"
+														cols="80"
+														name="status_forn">
+													</textarea>
+												</div>
+											</div>
+										</div>                                
+									</td>
+								</tr>
+														
+								</tbody>
+							</table>
+							<div class="btn-group" id="addProduct">
+								<button type="button" class="btn btn-primary" onclick="addLine();">Novo Registro</button>
+								<button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
+									<span class="caret"></span>
+									<span class="sr-only">Toggle Dropdown</span>
+								</button>
+								<ul class="dropdown-menu" role="menu">
+									<li><a href="#" onclick="showCopy();">Copiar Fornecedores</a></li>
+								</ul>
+							</div>
+							<button id="delProduct" type="button" class="btn btn-primary" disabled="disabled" onclick="deleteLines()">Remover</button>
+							<button id="reportButton" type="button" class="btn btn-primary" onclick="report()">Relatório</button>
+						</div>
+					</div>
+				</div>
+				
+			</div>
+
+		</div>
+
+
+    </form>
+</div>    
+</body>
+
+</html>
